@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HYPERZ - Movilidad Autónoma</title>
+    
+    <!-- fuentes que uso -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* colores principales de la pagina */
+        :root {
+            --bg-deep-night: #04044A;       
+            --surface-container: #000B75;   
+            --border-sky-blue: #00A4FF;     
+            --neon-blue: #0CE7FF;           
+            --accent-orange: #FF5F1F;       
+            --text-white: #FFFFFF;          
+            --text-gray: #B4C3CC;           
+            
+            --font-display: 'Geist', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'Space Mono', sans-serif;
+        }
+
+        /* quitar margenes feos por defecto */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-deep-night);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* animacion suave al cambiar de seccion */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        /* barra de navegacion fija arriba */
+        header {
+            width: 100%;
+            padding: 20px 40px;
+            background: rgba(4, 4, 74, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 164, 255, 0.2);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .logo span {
+            color: var(--neon-blue);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav ul li a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: var(--neon-blue);
+            text-shadow: 0 0 8px var(--neon-blue);
+        }
+
+        .btn-access {
+            background: transparent;
+            border: 1px solid var(--border-sky-blue);
+            color: var(--text-white);
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-access:hover {
+            background: rgba(0, 164, 255, 0.2);
+            box-shadow: 0 0 15px var(--border-sky-blue);
+        }
+
+        /* ocultar las paginas que no estan seleccionadas */
+        .page-section {
+            display: none;
+            padding: 140px 40px 60px 40px;
+            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-section.active-page {
+            display: block;
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        /* tarjeta principal del inicio con la foto de fondo */
+        .hero { 
+            text-align: center;
+            position: relative;
+            border-radius: 16px;
+            padding: 80px 30px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 164, 255, 0.3);
+            box-shadow: 0 0 40px rgba(0, 11, 117, 0.6);
+            background: 
+               linear-gradient(180deg, rgba(4, 4, 74, 0.35) 0%, rgba(4, 4, 74, 0.65) 100%),
+                url('https://external-preview.redd.it/people-could-be-in-fully-automated-cars-by-2035-v0-coCCl4F-lfCECXqidlbihnnnqLIfTtRplL4GiNBlUN4.jpg?width=1080&crop=smart&auto=webp&s=bf23e04fc2a8395c103a98485fc6fe5a21f42ada') center/cover no-repeat;
+        }
+
+        .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto 60px auto;
+  }
+
+  .hero-stats, .stats-container, .hero-features {
+    margin-top: 50px !important;
+    margin-bottom: 60px !important;
+    padding: 20px !important;
+  }
+        .sys-badge {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--neon-blue);
+            background: rgba(4, 4, 74, 0.6);
+            border: 1px solid rgba(12, 231, 255, 0.4);
+            padding: 6px 16px;
+            border-radius: 999px;
+            display: inline-block;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            backdrop-filter: blur(4px);
+        }
+
+        h1, h2 {
+            font-family: var(--font-display);
+            margin-bottom: 24px;
+        }
+
+        h1 { 
+            font-size: 52px; 
+            line-height: 1.15; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        h1 span { color: var(--neon-blue); }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: #E2E8F0;
+            margin-bottom: 30px;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+        }
+
+        /* boton naranja */
+        .btn-orange {
+            background: var(--accent-orange);
+            color: var(--text-white);
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 95, 31, 0.5);
+        }
+
+        .btn-orange:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(255, 95, 31, 0.8);
+        }
+
+        /* recuadro de la grafica */
+        .analytics-container {
+            background: rgba(0, 11, 117, 0.4);
+            border: 1px solid rgba(0, 164, 255, 0.2);
+            border-radius: 8px;
+            padding: 30px;
+            margin: 60px auto 0 auto;
+            max-width: 900px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .graph-wrapper {
+            margin-top: 20px;
+            position: relative;
+            width: 100%;
+        }
+
+        /* opiniones de los usuarios */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1100px;
+            margin: 30px auto 0 auto;
+        }
+
+        .review-card {
+            background: rgba(0, 11, 117, 0.4);
+            border: 1px solid rgba(0, 164, 255, 0.2);
+            padding: 30px;
+            border-radius: 8px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .review-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(12, 231, 255, 0.15);
+        }
+
+        .review-stars {
+            color: #FFD700;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .review-text {
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .review-user {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--neon-blue);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 10px;
+        }
+
+        /* banner en movimiento para las marcas */
+        .brands-section {
+            margin-top: 70px;
+            text-align: center;
+        }
+
+        .brands-title {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-gray);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            background: rgba(0, 11, 117, 0.25);
+            border-top: 1px solid rgba(0, 164, 255, 0.15);
+            border-bottom: 1px solid rgba(0, 164, 255, 0.15);
+            padding: 20px 0;
+            white-space: nowrap;
+        }
+
+        .marquee-track {
+            display: inline-flex;
+            gap: 60px;
+            animation: scrollBrands 22s linear infinite;
+        }
+
+        .brand-item {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-white);
+            opacity: 0.75;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .brand-item:hover {
+            opacity: 1;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .brand-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-orange);
+            border-radius: 50%;
+        }
+
+        @keyframes scrollBrands {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* area de la calculadora de viajes */
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .destinations-panel {
+            background: rgba(0, 11, 117, 0.2);
+            border: 1px dashed rgba(0, 164, 255, 0.3);
+            border-radius: 8px;
+            padding: 30px;
+        }
+
+        .dest-card {
+            background: var(--bg-deep-night);
+            border: 1px solid rgba(0, 164, 255, 0.15);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dest-card:hover {
+            border-color: var(--neon-blue);
+            background: rgba(12, 231, 255, 0.05);
+        }
+
+        .calculator-container {
+            background: var(--surface-container);
+            border: 1px solid rgba(0, 164, 255, 0.3);
+            border-radius: 8px;
+            padding: 35px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-gray);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            background: rgba(4, 4, 74, 0.8);
+            border: 1px solid var(--border-sky-blue);
+            border-radius: 4px;
+            padding: 10px;
+            color: var(--text-white);
+            font-size: 14px;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .pay-btn {
+            background: rgba(4, 4, 74, 0.6);
+            border: 1px solid var(--border-sky-blue);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .pay-btn.selected {
+            background: var(--neon-blue);
+            color: var(--bg-deep-night);
+            border-color: var(--neon-blue);
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(12, 231, 255, 0.05);
+            border: 1px dashed var(--neon-blue);
+            border-radius: 4px;
+            display: none;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .result-price {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin-top: 5px;
+        }
+
+        /* diseño de la ventana de chat */
+        .chat-container {
+            max-width: 700px;
+            margin: 30px auto;
+            background: var(--surface-container);
+            border: 1px solid rgba(0, 164, 255, 0.3);
+            border-radius: 8px;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: rgba(4, 4, 74, 0.8);
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 164, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: #00FF66;
+            border-radius: 50%;
+            animation: livePulse 1.5s infinite;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-msg {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .msg-ia {
+            background: rgba(4, 4, 74, 0.7);
+            border-left: 3px solid var(--neon-blue);
+            align-self: flex-start;
+        }
+
+        .msg-user {
+            background: var(--border-sky-blue);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 15px;
+            background: rgba(4, 4, 74, 0.5);
+            border-top: 1px solid rgba(0, 164, 255, 0.2);
+            gap: 10px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            background: var(--bg-deep-night);
+            border: 1px solid var(--border-sky-blue);
+            border-radius: 4px;
+            padding: 10px 15px;
+            color: white;
+        }
+
+        /* tarjetas de planes de suscripcion */
+        .club-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .club-card {
+            background: linear-gradient(145deg, #000B75, #04044A);
+            border: 1px solid rgba(0, 164, 255, 0.2);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .club-card.featured {
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 20px rgba(255, 95, 31, 0.2);
+        }
+
+        .club-price {
+            font-size: 36px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            margin: 15px 0;
+            color: var(--neon-blue);
+        }
+
+        .club-features {
+            list-style: none;
+            margin: 20px 0;
+            font-size: 14px;
+            color: var(--text-gray);
+            text-align: left;
+        }
+
+        .club-features li {
+            margin-bottom: 10px;
+        }
+
+        .club-features li::before {
+            content: "✓ ";
+            color: var(--neon-blue);
+        }
+
+        .status-panel {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 11, 117, 0.5);
+            border: 1px solid rgba(0, 164, 255, 0.2);
+            backdrop-filter: blur(8px);
+            padding: 24px;
+            border-radius: 8px;
+            margin: 50px auto 0 auto;
+            max-width: 900px;
+        }
+
+        .stat-item { text-align: left; }
+        .stat-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-gray); text-transform: uppercase; }
+        .stat-value { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--text-white); margin-top: 4px; }
+        .stat-value.pulse::before { content: "● "; color: var(--neon-blue); display: inline-block; animation: livePulse 1.2s infinite ease-in-out; }
+
+        footer {
+            width: 100%;
+            padding: 40px;
+            border-top: 1px solid rgba(0, 164, 255, 0.1);
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-top: 60px;
+        }
+
+        .footer-links a { color: var(--text-gray); text-decoration: none; margin: 0 15px; }
+        .footer-links a:hover { color: var(--neon-blue); }
+
+        /* ajuste para pantallas de celular */
+        @media (max-width: 850px) {
+            .testimonials-grid, .calculator-grid { grid-template-columns: 1fr; }
+            nav ul { gap: 10px; }
+            header { padding: 20px; }
+            h1 { font-size: 36px; }
+        }
+        
+/* ESTILOS EN TONALIDADES AZULES Y ESPACIOSOS              */
+
+/* Espaciado de secciones */
+section {
+  padding: 60px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Títulos principales */
+.services-section h2,
+.tech-quote-section h3 {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #ffffff !important;
+}
+
+/* Grilla de Servicios en Azul */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+/* Tarjetas con estructura vertical (Texto arriba, Imagen grande abajo) */
+.service-card {
+  background: rgba(14, 24, 54, 0.7); /* Azul oscuro transparente */
+  border: 1px solid rgba(0, 164, 255, 0.25); /* Borde azul neón sutil */
+  border-radius: 16px;
+  padding: 32px 24px;
+  gap: 20px;
+  display: flex;
+  flex-direction: column; /* Coloca el texto arriba y la imagen abajo */
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0, 164, 255, 0.6);
+}
+
+.service-info {
+  margin-bottom: 20px;
+}
+
+.service-info h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #ffffff;
+  font-size: 1.3rem;
+}
+
+.service-info p {
+  color: #a3c2ee; /* Azul claro muy legible */
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Imagen más grande ubicada abajo */
+.service-image {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.service-image img {
+  width: 100%;
+  max-width: 280px; /* Imagen mucho más grande */
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 164, 255, 0.3);
+}
+
+/* Sección Cita y Video (Al final del todo) */
+.tech-quote-section {
+  text-align: center;
+  border-top: 1px solid rgba(0, 164, 255, 0.2);
+  margin-top: 80px;
+  padding-top: 60px;
+  padding-bottom: 80px;
+}
+
+.quote-text {
+  font-size: 1.35rem;
+  font-style: italic;
+  color: #d0e4ff !important;
+  max-width: 850px;
+  margin: 0 auto 16px auto;
+  padding-top: 30px; /* 30px de espacio arriba para que no quede pegado al texto del video */
+  line-height: 1.6;
+}
+
+.quote-author {
+  font-weight: 600;
+  color: #00d2ff !important; /* Azul cyan neón */
+  display: block;
+  margin-bottom: 60px;
+  font-size: 1.1rem;
+}
+
+.video-container {
+  max-width: 600px;
+  margin: 0 auto 100px auto; /* 100px de margen abajo para alejarlo de la frase */
+}
+
+.video-preview-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.thumbnail-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 164, 255, 0.3);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+}
+
+.thumbnail-wrapper img {
+  width: 100%;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.thumbnail-wrapper:hover img {
+  transform: scale(1.03);
+}
+
+.play-button-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 164, 255, 0.85); /* Botón azul brillante en lugar de rojo */
+  color: white;
+  font-size: 1.6rem;
+  padding: 12px 24px;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(0, 164, 255, 0.5);
+}
+
+.video-title {
+  margin-top: 16px;
+  font-size: 1rem;
+  color: #00d2ff;
+}
+/* =======================================================
+   REAJUSTE GENERAL DE ESPACIADO Y AIRE
+   ======================================================= */
+
+/* 1. Darle aire vertical a TODAS las secciones de la página */
+section, .section, .hero-section {
+  padding-top: 80px !important;
+  padding-bottom: 80px !important;
+  margin-bottom: 40px !important;
+}
+
+/* 2. Separar los Títulos Principales (Opiniones, Otros servicios, etc.) */
+h2, .section-title {
+  margin-top: 40px !important;
+  margin-bottom: 50px !important;
+  text-align: center;
+}
+
+/* 3. Despegar la gráfica de "Preferencias de Movilidad" */
+.chart-container, .graph-card, .analytics-section {
+  margin-top: 40px !important;
+  margin-bottom: 80px !important;
+  padding: 40px 20px !important;
+}
+
+/* 4. Tarjetas de Opiniones y Servicios más amplias */
+.reviews-grid, .testimonials-grid, .services-grid {
+  gap: 40px !important; /* Espacio horizontal entre tarjetas */
+  margin-top: 30px !important;
+  margin-bottom: 60px !important;
+}
+
+/* 5. Agrandar Tarjetas de Servicios y mostrar las IMÁGENES COMPLETAS */
+.service-card {
+  padding: 32px 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  min-height: 380px !important; /* Altura suficiente para que entre todo */
+}
+
+.service-image {
+  width: 100% !important;
+  margin-top: 20px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.service-image img {
+  width: 100% !important;
+  max-width: 320px !important; /* Imagen mucho más visible */
+  height: 180px !important;    /* Para que no se corte por abajo */
+  object-fit: cover !important;
+  border-radius: 12px !important;
+}
+
+/* 6. Despegar la sección del Video y la Cita al final */
+.tech-quote-section {
+  padding-top: 60px !important;
+  padding-bottom: 100px !important;
+}
+
+.video-container {
+  margin-bottom: 70px !important; /* Separa el video de la frase de Jensen Huang */
+}
+
+.quote-text {
+  margin-top: 40px !important;
+  line-height: 1.8 !important;
+}
+/* Oculta el video en todas las secciones por defecto */
+.tech-quote-section {
+    display: none;
+}
+
+/* Solo muestra el video cuando la sección de inicio está activa */
+#inicio.active-page .tech-quote-section,
+.page-section.active-page .tech-quote-section {
+    display: block !important;
+}
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">HYPERZ<span></span></div>
+        <nav>
+            <ul>
+                <li><a onclick="navigateTo('inicio')" id="nav-inicio" class="active">Inicio</a></li>
+                <li><a onclick="navigateTo('calcular')" id="nav-calcular">Reservar viaje</a></li>
+                <li><a onclick="navigateTo('asistente')" id="nav-asistente">Atención 24/7</a></li>
+                <li><a onclick="navigateTo('club')" id="nav-club">Planes Club</a></li>
+            </ul>
+        </nav>
+        <button class="btn-access" id="auth-btn" onclick="navigateTo('registro')">Registrarse</button>
+    </header>
+
+    <section id="sec-inicio" class="page-section active-page">
+        
+        <div class="hero">
+            <div class="hero-content">
+                <div class="sys-badge">Sistemas Autónomos</div>
+                <h1>El futuro se maneja solo:<br><span>Vehículos inteligentes</span> a tu disposición</h1>
+                <p class="hero-subtitle">Viaja con la máxima seguridad y confort en nuestros autos equipados con tecnología de auto-pilotaje de última generación.</p>
+                <button class="btn-orange" onclick="navigateTo('calcular')">COTIZAR TU RUTA AHORA →</button>
+            </div>
+
+            <div class="status-panel">
+                <div class="stat-item">
+                    <div class="stat-label">Sistema Autónomo</div>
+                    <div class="stat-value">100%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Disponibilidad/Horario</div>
+                    <div class="stat-value pulse">Las 24 del día</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Seguridad de autos</div>
+                    <div class="stat-value">Nivel 4 certificado</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-container">
+            <h2 style="font-size: 24px; margin-bottom: 5px;">Preferencias de Movilidad</h2>
+            <p style="color: var(--text-gray); font-size: 14px;">Total de usuarios al mes que eligen nuestros vehículos autónomos.</p>
+            <div class="graph-wrapper">
+                <svg viewBox="0 0 500 150" width="100%" height="150" style="overflow: visible;">
+                    <g stroke="rgba(0, 164, 255, 0.15)" stroke-width="1">
+                        <line x1="0" y1="120" x2="500" y2="120" />
+                        <line x1="0" y1="80" x2="500" y2="80" />
+                        <line x1="0" y1="40" x2="500" y2="40" />
+                    </g>
+                    <path d="M 10 130 Q 120 110, 200 70 T 380 40 T 490 15" fill="none" stroke="var(--neon-blue)" stroke-width="4" filter="drop-shadow(0px 0px 5px #0CE7FF)" />
+                    <circle cx="10" cy="130" r="5" fill="var(--accent-orange)" />
+                    <circle cx="200" cy="70" r="5" fill="var(--accent-orange)" />
+                    <circle cx="490" cy="15" r="5" fill="var(--accent-orange)" />
+                    
+                    <text x="10" y="148" fill="var(--text-gray)" font-size="10" font-family="Space Mono">Marzo</text>
+                    <text x="190" y="148" fill="var(--text-gray)" font-size="10" font-family="Space Mono">Mayo</text>
+                    <text x="440" y="148" fill="var(--text-gray)" font-size="10" font-family="Space Mono">Julio (47k+)</text>
+                </svg>
+            </div>
+        </div>
+
+        <div style="margin-top: 80px;">
+            <h2 style="text-align: center;">Opiniones de Clientes</h2>
+            <div class="testimonials-grid">
+                <div class="review-card">
+                    <div>
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Poder adelantar trabajos en la laptop dentro del Aetherius Vector mientras me lleva solo a la U es increible."</p>
+                    </div>
+                    <div class="review-user">@EstudianteUTP</div>
+                </div>
+                <div class="review-card">
+                    <div>
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"La comodidad que ofrece el Kinetix Avant S en autopista es impresionante. Llegas totalmente relajado a cualquier reunión."</p>
+                    </div>
+                    <div class="review-user">@Emprendedor.pty</div>
+                </div>
+                <div class="review-card">
+                    <div>
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Pedí el Vanguard Apex para ir al aeropuerto con la familia y las maletas. Puntualidad impecable."</p>
+                    </div>
+                    <div class="review-user">@Mateo.f</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="services-section" style="margin-top: 80px;">
+            <h2 style="text-align: center; margin-bottom: 30px;">Otros servicios disponibles</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-info">
+                        <h3>Mascotas</h3>
+                        <p>Traslado de mascotas con transporte adecuado.</p>
+                    </div>
+                    <div class="service-image">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvCjw6ZGufZf_UkXSAAnKcO2KegKAO92EKVQVvoywsRw&s=10" alt="Mascotas" />
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-info">
+                        <h3>Delivery / Envíos</h3>
+                        <p>Envío de paquetes o compras</p>
+                    </div>
+                    <div class="service-image">
+                        <img src="https://www.estadao.com.br/resizer/v2/G2SDQMXKP5I4FMSSZRPP7UEEQY.jpg?quality=80&auth=4063f405c0775f7f36953ad6ad559428f93cc835e7c99db41146e9dd4b2ab27c&width=1200" alt="Delivery Grande" />
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-info">
+                        <h3>Pick-up en Tienda</h3>
+                        <p>Retiro de compras realizadas en comercios locales.</p>
+                    </div>
+                    <div class="service-image">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_RJ-o3G70pLKlO3y-m0FOLUm-dwM_qvGa0x7fM9MsCg&s=10" alt="Pick-up en Tienda" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="brands-section" style="margin-top: 80px;">
+            <div class="brands-title">Nuestros Autos Exclusivos</div>
+            <div class="marquee-container">
+                <div class="marquee-track">
+                    <div class="brand-item">AETHERIUS VECTOR EV <span class="brand-dot"></span></div>
+                    <div class="brand-item">KINETIX AVANT S <span class="brand-dot"></span></div>
+                    <div class="brand-item">VANGUARD APEX AUTONOMOUS <span class="brand-dot"></span></div>
+                    <div class="brand-item">SOVEREIGN ZENITH DRIVE <span class="brand-dot"></span></div>
+                    
+                    <div class="brand-item">AETHERIUS VECTOR EV <span class="brand-dot"></span></div>
+                    <div class="brand-item">KINETIX AVANT S <span class="brand-dot"></span></div>
+                    <div class="brand-item">VANGUARD APEX AUTONOMOUS <span class="brand-dot"></span></div>
+                    <div class="brand-item">SOVEREIGN ZENITH DRIVE <span class="brand-dot"></span></div>
+                </div>
+            </div>
+        </div>
+
+       <div class="tech-quote-section" style="margin-top: 80px;">
+    <h2>¿Cómo funciona un auto autónomo?</h2>
+    
+    <div class="video-container">
+        <a href="https://youtu.be/sEwmRsPDmNU" target="_blank" rel="noopener noreferrer" class="video-preview-link">
+            <div class="thumbnail-wrapper">
+                <img src="https://img.youtube.com/vi/sEwmRsPDmNU/hqdefault.jpg" alt="Video sobre autos autónomos">
+                <div class="play-button-overlay">▶</div>
+            </div>
+        </a>
+        <p class="video-title">Ver video: Así funcionan los autos que circulan sin conductor</p>
+    </div>
+
+    <blockquote class="quote-text">
+        "Los vehículos del futuro no serán definidos por sus caballos de fuerza, sino por la potencia de sus algoritmos y la inteligencia de su software."
+    </blockquote>
+    <cite class="quote-author">— Jensen Huang</cite>
+</div>
+    </section> 
+    <section id="sec-calcular" class="page-section">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="font-size: 36px;">Reserva tu Viaje</h2>
+            <p style="color: var(--text-gray);">Elige un destino, verifica disponibilidad de fechas y realiza tu pago.</p>
+        </div>
+
+        <div class="calculator-grid">
+            <div class="destinations-panel">
+                <h3 style="font-size: 18px; margin-bottom: 15px; font-family: var(--font-display);">📍 Rutas Frecuentes</h3>
+                <div class="dest-card" onclick="selectDestination('Terminal Central', 'Campus UTP', 12)">
+                    <div>
+                        <strong style="display:block; font-size:14px;">Ruta Universitaria</strong>
+                        <span style="font-size:12px; color:var(--text-gray);">Terminal Central ➔ Campus UTP</span>
+                    </div>
+                    <span style="color:var(--neon-blue); font-family:var(--font-mono); font-size:13px;">12 Km</span>
+                </div>
+                <div class="dest-card" onclick="selectDestination('Zona Residencial', 'Aeropuerto Internacional', 35)">
+                    <div>
+                        <strong style="display:block; font-size:14px;">Conexión Aeropuerto</strong>
+                        <span style="font-size:12px; color:var(--text-gray);">Centro Urbano ➔ Terminal Aérea</span>
+                    </div>
+                    <span style="color:var(--neon-blue); font-family:var(--font-mono); font-size:13px;">35 Km</span>
+                </div>
+                <div class="dest-card" onclick="selectDestination('Centro Financiero', 'Casco Antiguo', 8)">
+                    <div>
+                        <strong style="display:block; font-size:14px;">Ruta Comercial / Turística</strong>
+                        <span style="font-size:12px; color:var(--text-gray);">Hub Financiero ➔ Casco Histórico</span>
+                    </div>
+                    <span style="color:var(--neon-blue); font-family:var(--font-mono); font-size:13px;">8 Km</span>
+                </div>
+            </div>
+
+            <div class="calculator-container">
+                <div class="form-group">
+                    <label>¿Dónde te buscamos?</label>
+                    <input type="text" id="route-start" placeholder="Ej: Terminal de Autobuses">
+                </div>
+                <div class="form-group">
+                    <label>¿A dónde vas?</label>
+                    <input type="text" id="route-end" placeholder="Ej: Entrada Principal UTP">
+                </div>
+                <div class="form-group">
+                    <label>Distancia Estimada (KM)</label>
+                    <input type="number" id="route-distance" placeholder="Kilómetros del recorrido">
+                </div>
+                <div class="form-group">
+                    <label>Fecha de tu Viaje</label>
+                    <input type="date" id="route-date" onchange="checkDateAvailability()">
+                    <div id="date-status" style="font-family:var(--font-mono); font-size:11px; margin-top:5px;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Modelos Autónomos Disponibles</label>
+                    <select id="route-car">
+                        <option value="0.28">Aetherius Vector EV (Urbano Accesible) - $0.28/km</option>
+                        <option value="0.34">Kinetix Avant S (Sedán Confort) - $0.34/km</option>
+                        <option value="0.45">Vanguard Apex (SUV Familiar) - $0.45/km</option>
+                        <option value="0.70">Sovereign Zenith Drive (Executive Lux) - $0.70/km</option>
+                    </select>
+                </div>
+                <button class="btn-orange" style="width: 100%; margin-top: 10px;" onclick="calculatePrice()">CALCULAR PRECIO</button>
+
+                <div class="result-box" id="calc-result">
+                    <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-gray);">TOTAL</div>
+                    <div class="result-price" id="final-price">$0.00</div>
+                    
+                    <hr style="border:none; border-top:1px solid rgba(0, 164, 255, 0.2); margin:15px 0;">
+                    
+                    <label style="font-family:var(--font-mono); font-size:11px; color:var(--text-gray); display:block; text-align:left;">MÉTODO DE PAGO</label>
+                    <div class="payment-methods">
+                        <button class="pay-btn selected" id="method-card" onclick="setPaymentMethod('Tarjeta de Crédito')">💳 Tarjeta de Crédito</button>
+                        <button class="pay-btn" id="method-yappy" onclick="setPaymentMethod('Yappy')">📱 Yappy / Pago Móvil</button>
+                    </div>
+                    
+                    <button class="btn-orange" style="width: 100%; margin-top: 5px; background: #00FF66; color: #04044A;" onclick="confirmBooking()">CONFIRMAR Y PAGAR VIAJE</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="sec-asistente" class="page-section">
+        <div style="text-align: center;">
+            <h2 style="font-size: 36px;">Atención al Cliente</h2>
+            <p style="color: var(--text-gray);">Servicio de atención disponible las 24 horas del día.</p>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="online-dot"></div>
+                <div>
+                    <strong style="display: block; font-size: 14px;">Asistente virtual</strong>
+                    <span style="font-size: 11px; color: var(--text-gray); font-family: var(--font-mono);">En línea ahora</span>
+                </div>
+            </div>
+            <div class="chat-box" id="chat-messages">
+                <div class="chat-msg msg-ia">
+                    ¡Hola! Soy Lucy la asistente virtual inteligente de HYPERZ. ¿En qué puedo ayudarte hoy? Puedes preguntarme sobre tarifas, disponibilidad de autos.
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="user-chat-input" placeholder="Escribe tu mensaje aquí..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                <button class="btn-access" style="border-color: var(--neon-blue); color: var(--neon-blue);" onclick="sendChatMessage()">ENVIAR</button>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="sec-club" class="page-section">
+        <div style="text-align: center;">
+            <h2 style="font-size: 36px;">Membresías de Ahorro</h2>
+            <p style="color: var(--text-gray);">Únete a un plan mensual y obtén descuentos diarios en todos tus viajes autónomos.</p>
+        </div>
+
+        <div class="club-grid">
+            <div class="club-card">
+                <h3 style="font-family: var(--font-display);">Membresia Universitaria</h3>
+                <p style="color: var(--text-gray); font-size: 13px; margin-top: 5px;">Diseñado para la comunidad académica.</p>
+                <div class="club-price">$9.99<span style="font-size:14px; color:var(--text-gray);">/mes</span></div>
+                <ul class="club-features">
+                    <li>15% de descuento en Aetherius Vector y Kinetix Avant</li>
+                    <li>Prioridad de asignación en horas pico</li>
+                </ul>
+                <button class="btn-access" style="width:100%;" onclick="subscribeClub('Membresia Universitaria')">Suscribirme</button>
+            </div>
+
+            <div class="club-card featured">
+                <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--accent-orange); font-size:10px; padding:3px 10px; border-radius:10px; font-weight:700;">MÁS POPULAR</div>
+                <h3 style="font-family: var(--font-display);">Membresia Premium</h3>
+                <p style="color: var(--text-gray); font-size: 13px; margin-top: 5px;">Movilidad autónoma VIP sin límites.</p>
+                <div class="club-price">$24.99<span style="font-size:14px; color:var(--text-gray);">/mes</span></div>
+                <ul class="club-features">
+                    <li>30% de descuento en todos tus viajes</li>
+                    <li>Acceso preferencial a Vanguard Apex y Sovereign Zenith</li>
+                </ul>
+                <button class="btn-orange" style="width:100%; padding: 10px;" onclick="subscribeClub('Membresia Premium')">Suscribirme</button>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="sec-registro" class="page-section">
+        <div style="max-width: 450px; margin: 0 auto; background: var(--surface-container); padding: 40px; border-radius: 8px; border: 1px solid rgba(0,164,255,0.2);">
+            <h2 style="margin-bottom: 10px;">Crea tu Cuenta</h2>
+            <p style="color: var(--text-gray); font-size: 14px; margin-bottom: 30px;">Crea tu cuenta en segundos y empieza a moverte por la ciudad.</p>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="reg-name" required placeholder="Tu nombre y apellido">
+                </div>
+                <div class="form-group">
+                    <label>Dirección de Correo</label>
+                    <input type="email" id="reg-email" required placeholder="correo@ejemplo.com">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="reg-pass" required placeholder="••••••••">
+                </div>
+                <button class="btn-orange" type="submit" style="width: 100%; margin-top: 10px;">Registrarme</button>
+            </form>
+        </div>
+    </section>
+
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">Privacidad</a>
+            <a href="#">Términos de Servicio</a>
+            <a href="#">Soporte Técnico</a>
+        </div>
+        <div>
+            © 2026 HYPERZ MOVILIDAD AUTÓNOMA. TODOS LOS DERECHOS RESERVADOS.
+        </div>
+        <div style="font-size: 12px; color: var(--text-gray); margin-top: 5px;">
+            Desarrollado por Greychel Moreno y Oliver Pérez
+        </div>
+    </footer>
+
+</body>
+</html>
+
+    <!-- JS de la pagina -->
+    <script>
+        // guarda el metodo de pago activo
+        let selectedPaymentMethod = "Tarjeta de Crédito";
+
+        // funcion para cambiar la vista que se muestra y ocultar las demas
+        function navigateTo(sectionId) {
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(sec => sec.classList.remove('active-page'));
+            
+            const navLinks = document.querySelectorAll('nav ul li a');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            document.getElementById('sec-' + sectionId).classList.add('active-page');
+            
+            const activeLink = document.getElementById('nav-' + sectionId);
+            if (activeLink) { activeLink.classList.add('active'); }
+
+            window.scrollTo(0, 0);
+        }
+
+        // llena los campos solos si tocan uno de los destinos frecuentes
+        function selectDestination(start, end, distance) {
+            document.getElementById('route-start').value = start;
+            document.getElementById('route-end').value = end;
+            document.getElementById('route-distance').value = distance;
+            calculatePrice();
+        }
+
+        // revisa si la fecha cae fin de semana para tirar el aviso de de si ahy demanda alta o baja 
+        function checkDateAvailability() {
+            const dateInput = document.getElementById('route-date').value;
+            const statusDiv = document.getElementById('date-status');
+            
+            if(!dateInput) return;
+
+            const day = new Date(dateInput).getUTCDay();
+            if(day === 0 || day === 6) { // si es sabado o domingo
+                statusDiv.style.color = "var(--accent-orange)";
+                statusDiv.innerText = "⚠ ALTA DEMANDA PARA ESTA FECHA: Te recomendamos reservar tu unidad con tiempo.";
+            } else {
+                statusDiv.style.color = "#00FF66";
+                statusDiv.innerText = "✓ EXCELENTE DISPONIBILIDAD: Muchos vehículos libres para este día.";
+            }
+        }
+
+        // saca la cuenta del costo total
+        function calculatePrice() {
+            const distance = parseFloat(document.getElementById('route-distance').value);
+            const pricePerKm = parseFloat(document.getElementById('route-car').value);
+            const start = document.getElementById('route-start').value;
+            const end = document.getElementById('route-end').value;
+
+            if (!start || !end || isNaN(distance) || distance <= 0) {
+                alert("Por favor, ingresa el lugar del origen/destino y la distancia en KM.");
+                return;
+            }
+
+            const totalPrice = distance * pricePerKm;
+            document.getElementById('final-price').innerText = `$${totalPrice.toFixed(2)}`;
+            document.getElementById('calc-result').style.display = 'block';
+        }
+
+        // para seleccionar entre tarjeta o yappy
+        function setPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            document.getElementById('method-card').classList.remove('selected');
+            document.getElementById('method-yappy').classList.remove('selected');
+
+            if(method === 'Tarjeta de Crédito') {
+                document.getElementById('method-card').classList.add('selected');
+            } else {
+                document.getElementById('method-yappy').classList.add('selected');
+            }
+        }
+
+        // simular pago listo
+        function confirmBooking() {
+            alert(`¡Reserva confirmada! Pago mediante: ${selectedPaymentMethod}`);
+        }
+
+        // enviar mensaje en el chat
+        function sendChatMessage() {
+            const input = document.getElementById('user-chat-input');
+            const chatBox = document.getElementById('chat-messages');
+            
+            if (!input.value.trim()) return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-msg msg-user';
+            userMsg.innerText = input.value;
+            chatBox.appendChild(userMsg);
+
+            const userText = input.value.toLowerCase();
+            input.value = '';
+
+            setTimeout(() => {
+                const iaMsg = document.createElement('div');
+                iaMsg.className = 'chat-msg msg-ia';
+                
+                if(userText.includes('precio') || userText.includes('tarifa') || userText.includes('auto') || userText.includes('modelo')) {
+                    iaMsg.innerText = "Nuestras tarifas por km son: Aetherius Vector ($0.28), Kinetix Avant ($0.34), Vanguard Apex ($0.45) y Sovereign Zenith ($0.70).";
+                } else if(userText.includes('pago') || userText.includes('yappy')) {
+                    iaMsg.innerText = "Puedes pagar cómodamente con Yappy o cualquier tarjeta de crédito al reservar tu viaje.";
+                } else {
+                    iaMsg.innerText = "¡Con gusto! Puedes cotizar el precio de cualquier viaje en la sección 'Reservar viaje', solo ingresa tu lugar de salida y a donde quieres ir y el programa te calculara inmediatamente el total del viaje.";
+                }
+                
+                chatBox.appendChild(iaMsg);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 600);
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // mensaje cuando se suscriben
+        function subscribeClub(plan) {
+            alert(`¡Te has suscrito exitosamente al plan: ${plan}!`);
+        }
+
+        // simular el registro
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            alert(`¡Bienvenido/a ${name}! Tu cuenta se ha registrado correctamente.`);
+            navigateTo('inicio');
+        }
+        
+    </script>
+</body>
+</html>
